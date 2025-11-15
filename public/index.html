@@ -38,12 +38,14 @@
 </head>
 
 <body>
-    <div class="card">
-        <h1 style="margin:0 0 8px">WeatherCraft</h1>
-        <p style="margin:0 0 12px">This site serves via Netlify Functions.</p>
-        <p style="margin:0">Try the API: <a
-                href="/.netlify/functions/api/api/weather?city=London&units=metric">/api/weather?city=London</a></p>
-    </div>
+        <div class="card">
+                <h1 style="margin:0 0 8px">WeatherCraft</h1>
+                <p style="margin:0 0 12px">Redirecting to the app…</p>
+                <p style="margin:0">If not redirected, <a href="/.netlify/functions/api">open the app</a>.</p>
+        </div>
+        <script>
+            window.location.replace('/.netlify/functions/api');
+        </script>
 </body>
 
 </html>

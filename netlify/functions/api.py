@@ -60,10 +60,9 @@ def handler(event, context):
         if key not in ('CONTENT_TYPE', 'CONTENT_LENGTH'):
             environ[f'HTTP_{key}'] = value
     
-    # Handle request body
-    if body:
-        from io import BytesIO
-        environ['wsgi.input'] = BytesIO(body.encode('utf-8'))
+    # Handle request body (WSGI requires a stream object for wsgi.input)
+    from io import BytesIO
+    environ['wsgi.input'] = BytesIO(body.encode('utf-8')) if body else BytesIO(b"")
     
     # Get response from Flask app
     with app.request_context(environ):
