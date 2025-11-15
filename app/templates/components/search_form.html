@@ -1,0 +1,16 @@
+<div class="flex flex-col md:flex-row gap-3 items-stretch md:items-center">
+    <div class="flex-1 relative">
+        <input x-model.debounce.300ms="query" @keyup.enter="search()" type="text"
+            placeholder="Search city (e.g., London, Tokyo)" aria-label="Search city"
+            class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
+    </div>
+    <div class="flex items-center gap-2">
+        <label class="text-sm">Units</label>
+        <button @click="toggleUnits" :aria-pressed="units==='imperial'"
+            class="btn flex items-center gap-1 text-sm rounded-lg ring-1 ring-slate-300 dark:ring-slate-700 px-3 py-2">
+            <span x-text="units==='metric' ? '°C' : '°F'"></span>
+        </button>
+        <button @click="search()"
+            class="btn rounded-lg bg-brand-600 hover:bg-brand-700 text-white px-4 py-2 shadow-sm">Search</button>
+    </div>
+</div>

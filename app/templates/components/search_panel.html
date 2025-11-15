@@ -1,0 +1,106 @@
+{# Reusable Search Panel Component - expects to be rendered inside x-data="weatherApp()" #}
+{# Uses: query, search(), onInputKeydown(), suggestions, showSuggest, highlighted, selectSuggestion(), units #}
+
+<div role="search" class="relative group">
+    <!-- Ambient glow -->
+    <div aria-hidden="true"
+        class="pointer-events-none absolute -inset-2 rounded-[28px] bg-gradient-to-r from-sky-500/15 via-fuchsia-500/15 to-purple-500/15 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+    </div>
+
+    <!-- Gradient border wrapper -->
+    <div
+        class="relative p-[1.5px] rounded-[24px] bg-gradient-to-r from-sky-500/40 via-fuchsia-500/40 to-purple-500/40 group-focus-within:from-sky-500/80 group-focus-within:via-fuchsia-500/80 group-focus-within:to-purple-500/80 transition-colors duration-300">
+        <!-- Glass card -->
+        <div
+            class="rounded-[22px] bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border border-white/40 dark:border-white/10 shadow-2xl shadow-sky-500/10">
+            <div class="p-5 md:p-6">
+                <!-- Top row: Input + Primary button -->
+                <div class="flex flex-col md:flex-row items-stretch md:items-center gap-3">
+                    <!-- Search input -->
+                    <div class="relative flex-1 min-w-0">
+                        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500">
+                            <!-- Heroicon: Magnifying Glass -->
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M21 21l-5.6-5.6m0 0A7 7 0 105.8 5.8a7 7 0 009.6 9.6z"></path>
+                            </svg>
+                        </div>
+                        <label for="sp-city-input" class="sr-only">Search city</label>
+                        <input id="sp-city-input" x-model.debounce.300ms="query" @keydown="onInputKeydown($event)"
+                            @keyup.enter="search()" type="text" placeholder="Search city…" aria-label="Search city"
+                            aria-autocomplete="list" aria-controls="sp-suggest-list"
+                            :aria-expanded="(showSuggest && suggestions.length) ? 'true' : 'false'"
+                            :aria-activedescendant="highlighted >= 0 ? ('sp-opt-' + highlighted) : null" role="combobox"
+                            class="block w-full h-14 rounded-2xl pl-12 pr-4
+                     bg-white/70 dark:bg-slate-950/40
+                     border-2 border-slate-200/70 dark:border-slate-700/60
+                     shadow-inner shadow-slate-900/5
+                     text-base font-medium text-slate-800 dark:text-slate-100
+                     placeholder:text-slate-400 dark:placeholder:text-slate-500
+                     outline-none transition-all duration-300
+                     focus:border-transparent focus:ring-4 focus:ring-sky-400/30
+                     focus:shadow-[0_0_0_1px] focus:shadow-transparent" />
+
+                        <!-- Suggestions dropdown -->
+                        <div x-show="showSuggest && suggestions.length" x-cloak x-transition id="sp-suggest-list"
+                            role="listbox" aria-labelledby="sp-city-input"
+                            class="absolute z-50 mt-2 w-full rounded-2xl border border-slate-200/70 dark:border-slate-700/70 bg-white/95 dark:bg-slate-900/95 shadow-xl overflow-hidden max-h-72 overflow-auto">
+                            <template x-for="(s, idx) in suggestions" :key="s.key || (s.name + idx)">
+                                <button type="button" :id="'sp-opt-' + idx" @click="selectSuggestion(idx)" role="option"
+                                    :aria-selected="(idx === highlighted).toString()"
+                                    class="w-full text-left px-4 py-3 text-sm flex items-center gap-2 transition-colors duration-150 hover:bg-slate-50 dark:hover:bg-slate-800"
+                                    :class="{ 'bg-slate-100 dark:bg-slate-800': idx === highlighted }">
+                                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M21 21l-5.6-5.6m0 0A7 7 0 105.8 5.8a7 7 0 009.6 9.6z"></path>
+                                    </svg>
+                                    <span class="font-medium text-slate-700 dark:text-slate-200" x-text="s.name"></span>
+                                    <span class="text-slate-400 dark:text-slate-500"
+                                        x-text="s.region ? '· ' + s.region : ''"></span>
+                                    <span class="text-slate-400 dark:text-slate-500"
+                                        x-text="s.country ? '· ' + s.country : ''"></span>
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Primary action -->
+                    <button @click="search()" aria-label="Search" class="relative overflow-hidden inline-flex items-center justify-center h-14 px-8 rounded-2xl
+                         text-white font-semibold tracking-wide
+                         bg-gradient-to-r from-sky-600 via-fuchsia-600 to-purple-600
+                         shadow-lg shadow-sky-500/30
+                         transition-all duration-300
+                         hover:shadow-xl hover:shadow-fuchsia-500/40 hover:scale-[1.02]
+                         active:scale-95">
+                        <span class="relative z-10">Search</span>
+                        <div aria-hidden="true"
+                            class="absolute inset-0 rounded-2xl bg-gradient-to-r from-white/10 via-transparent to-white/10 opacity-0 group-hover:opacity-100 transition-opacity">
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Bottom row: Units toggle centered -->
+                <div class="mt-4 md:mt-5 flex justify-center">
+                    <!-- Units toggle: segmented -->
+                    <div class="w-full md:w-auto">
+                        <div class="inline-flex p-1 rounded-full border border-slate-200/60 dark:border-slate-700/60
+                            bg-white/70 dark:bg-slate-950/30 backdrop-blur">
+                            <button type="button" @click="units='metric'"
+                                class="relative px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200"
+                                :class="units==='metric' ? 'text-white shadow-md bg-gradient-to-r from-sky-500 to-fuchsia-500' : 'text-slate-700 dark:text-slate-300'">
+                                °C
+                            </button>
+                            <button type="button" @click="units='imperial'"
+                                class="relative px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200"
+                                :class="units!=='metric' ? 'text-white shadow-md bg-gradient-to-r from-fuchsia-500 to-purple-500' : 'text-slate-700 dark:text-slate-300'">
+                                °F
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

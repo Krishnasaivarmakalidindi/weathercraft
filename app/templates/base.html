@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en" x-data="themeState()" :class="{ 'dark': dark }" class="scroll-smooth">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ page_title or 'WeatherCraft' }}</title>
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛅</text></svg>">
+
+    <!-- Tailwind via CDN (recommended for quick start). For local build, see README. -->
+    <script>
+        // Configure Tailwind dynamically via CDN
+        window.tailwind = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd',
+                            400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8',
+                            800: '#1e40af', 900: '#1e3a8a'
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Flowbite components (optional) -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
+
+    <!-- Minimal custom CSS for micro-interactions -->
+    <style>
+        /* Hide Alpine-marked elements until hydrated */
+        [x-cloak] {
+            display: none !important;
+        }
+
+        .card {
+            transition: transform .25s ease, box-shadow .25s ease;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                opacity: 0.5;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .delay-1000 {
+            animation-delay: 1s;
+        }
+
+        .fade-enter-active {
+            opacity: 1;
+            transition: opacity .25s ease;
+        }
+
+        .fade-leave {
+            opacity: 1;
+        }
+
+        .fade-leave-active {
+            opacity: 0;
+            transition: opacity .2s ease;
+        }
+
+        .skeleton {
+            position: relative;
+            overflow: hidden;
+            background: rgba(0, 0, 0, .08);
+        }
+
+        .dark .skeleton {
+            background: rgba(255, 255, 255, .08);
+        }
+
+        .skeleton::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            transform: translateX(-100%);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .3), transparent);
+            animation: shimmer 1.2s infinite;
+        }
+
+        @keyframes shimmer {
+            100% {
+                transform: translateX(100%);
+            }
+        }
+    </style>
+
+    <!-- Alpine.js for interactivity -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Lottie animation library -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
+</head>
+
+<body class="bg-white text-slate-800 dark:bg-slate-900 dark:text-slate-100 antialiased">
+    <header
+        class="sticky top-0 z-40 backdrop-blur bg-white/70 dark:bg-slate-900/70 border-b border-slate-200/60 dark:border-slate-700/60">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-2 font-semibold">
+                <span class="text-2xl">⛅</span>
+                <span>WeatherCraft</span>
+            </a>
+            <div class="flex items-center gap-3">
+                <button @click="toggleDark()"
+                    class="btn rounded-lg px-3 py-2 ring-1 ring-slate-300 dark:ring-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800">
+                    <span x-show="!dark">🌙</span>
+                    <span x-show="dark">☀️</span>
+                </button>
+                <a href="/about" class="text-sm hover:underline">About</a>
+            </div>
+        </div>
+    </header>
+
+    <main id="route-content" class="min-h-[calc(100vh-160px)]">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="border-t border-slate-200/60 dark:border-slate-700/60">
+        <div
+            class="max-w-6xl mx-auto px-4 py-8 text-sm text-slate-500 flex flex-wrap items-center justify-between gap-4">
+            <p>&copy; {{ (now() or '') if false else '' }} WeatherCraft — Crafted with Flask, Tailwind & Alpine.</p>
+            <p><a class="hover:underline" href="https://openweathermap.org/">Data: OpenWeatherMap</a></p>
+        </div>
+    </footer>
+
+    <!-- Flowbite JS (optional) -->
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
+
+    <!-- Theme and small helpers -->
+    <script>
+        // Ensure theme loads ASAP
+        (function () {
+            try {
+                const stored = localStorage.getItem('wc.dark');
+                const prefers = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                const enabled = stored ? stored === '1' : prefers;
+                if (enabled) document.documentElement.classList.add('dark');
+            } catch (_) { }
+        })();
+
+        function themeState() {
+            return {
+                dark: document.documentElement.classList.contains('dark'),
+                toggleDark() {
+                    this.dark = !this.dark;
+                    document.documentElement.classList.toggle('dark', this.dark);
+                    try { localStorage.setItem('wc.dark', this.dark ? '1' : '0'); } catch (_) { }
+                }
+            }
+        }
+
+        // Minimal route fade transitions
+        document.addEventListener('alpine:init', () => {
+            const root = document.getElementById('route-content');
+            if (!root) return;
+            document.addEventListener('wc:fade-out', () => {
+                root.classList.add('opacity-0');
+            });
+            document.addEventListener('wc:fade-in', () => {
+                root.classList.remove('opacity-0');
+                root.classList.add('transition-opacity', 'duration-200');
+            });
+        });
+
+        // Lottie helper: load into a container
+        window.wcLoadLottie = function (containerId, path, loop = true) {
+            if (!window.lottie) return null;
+            const el = document.getElementById(containerId);
+            if (!el) return null;
+            return lottie.loadAnimation({ container: el, renderer: 'svg', loop, autoplay: true, path });
+        }
+    </script>
+
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

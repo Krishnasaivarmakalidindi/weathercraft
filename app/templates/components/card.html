@@ -1,0 +1,26 @@
+<div class="card rounded-2xl ring-1 ring-slate-200 dark:ring-slate-800 bg-white dark:bg-slate-800 p-6">
+    <div class="flex items-start justify-between gap-4">
+        <div>
+            <h2 class="text-2xl font-semibold" x-text="data.current.city + ', ' + data.current.country"></h2>
+            <p class="text-slate-500 dark:text-slate-400" x-text="data.current.condition.description"></p>
+            <div class="mt-4 flex items-baseline gap-4">
+                <div class="text-5xl font-bold"
+                    x-text="Math.round(data.current.temp) + (units==='metric' ? '°C' : '°F')"></div>
+                <div class="text-sm text-slate-500 dark:text-slate-400">Feels like <span
+                        x-text="Math.round(data.current.feelsLike)"></span>°</div>
+            </div>
+        </div>
+        <div class="w-24 h-24">
+            <img :src="`https://openweathermap.org/img/wn/${data.current.condition.icon}@2x.png`"
+                :alt="data.current.condition.description" class="w-full h-full" />
+        </div>
+    </div>
+    <div class="mt-4 grid grid-cols-3 gap-4 text-sm text-slate-600 dark:text-slate-300">
+        <div>Humidity <div class="font-medium" x-text="data.current.humidity + '%'"></div>
+        </div>
+        <div>Wind <div class="font-medium" x-text="data.current.wind + (units==='metric' ? ' m/s' : ' mph')"></div>
+        </div>
+        <div>Updated <div class="font-medium" x-text="new Date(data.current.dt*1000).toLocaleTimeString()"></div>
+        </div>
+    </div>
+</div>

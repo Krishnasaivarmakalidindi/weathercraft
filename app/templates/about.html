@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="max-w-4xl mx-auto px-4 py-12">
+    <h1 class="text-3xl font-bold mb-4">About WeatherCraft</h1>
+    <p class="text-slate-600 dark:text-slate-300">WeatherCraft is a modern, responsive weather app built with Flask,
+        Tailwind CSS, and Alpine.js. It features smooth animations, dark mode, and an accessible, mobile‑first UI.</p>
+
+    <ul class="mt-6 space-y-2 list-disc list-inside text-slate-600 dark:text-slate-300">
+        <li>Fast, compact JSON API for SPA‑like updates</li>
+        <li>File cache with optional Redis to reduce API calls</li>
+        <li>Skeleton loaders and Lottie animations for delightful feedback</li>
+        <li>3‑day forecast scroller and expandable details</li>
+        <li>Dark mode toggle with persisted preference</li>
+    </ul>
+</section>
+{% endblock %}

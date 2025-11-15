@@ -1,0 +1,22 @@
+/* WeatherCraft custom micro-animations and overrides */
+:root {
+    color-scheme: light dark;
+}
+
+.page-enter {
+    opacity: 0;
+}
+
+.page-enter-active {
+    opacity: 1;
+    transition: opacity .2s ease;
+}
+
+.page-leave {
+    opacity: 1;
+}
+
+.page-leave-active {
+    opacity: 0;
+    transition: opacity .15s ease;
+}
