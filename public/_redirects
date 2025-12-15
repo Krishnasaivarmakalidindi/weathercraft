@@ -1,3 +1,0 @@
-# Ensure all requests are handled by the Python function
-/api/*   /.netlify/functions/api/:splat  200
-/*       /.netlify/functions/api         200
